@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <link rel="shortcut icon" href="/static/favicon.ico"/>
+    <meta name="viewport" content="width=650,user-scalable=no"/>
+    <link
+            href="/static/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+            crossorigin="anonymous"
+    />
+    <title>欢迎使用智慧分诊</title>
+    <style>
+        .title-logo {
+            height: 80px;
+        }
+
+        .container {
+            margin-top: 100px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .count-button {
+            width: 132px;
+            box-sizing: border-box;
+            margin: 16px 8px;
+        }
+
+        .count-number {
+            font-size: 18px;
+            font-weight: bolder;
+            margin: 0 8px;
+        }
+
+        .count-text {
+            width: 280px;
+            display: flex;
+            margin: 0 auto;
+            text-align: left;
+            height: 40px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            line-height: 40px;
+            padding: 0 12px;
+        }
+
+        .quote {
+            font-size: 12px;
+        }
+
+        .qrcode {
+            height: 180px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="title">
+        <img
+                class="title-logo"
+                src="/static/logo1.png"
+        />
+        <h1 style="display: inline; margin-bottom: 48px;">欢迎使用智慧分诊</h1>
+    </div>
+    <div style="text-align: center">
+        {#        <p class="count-text">当前计数：<span class="count-number"></span></p>#}
+        {#        <div style="display: flex; justify-content: center; margin-bottom: 80px">#}
+        <form method="post" action="/api/info" class="col-sm-6 offset-sm-3">
+            <div class="form-group row">
+                <div class="col-sm-8 row">
+                    <label for="age" class="col-sm-3 col-form-label">年龄</label>
+                    <div class="col-sm-9">
+                        <input type="number" name="age" class="form-control" id="age">
+                    </div>
+                </div>
+                <div class="col-sm-4 ofset-sm-6">
+                    <fieldset class="form-group row">
+                        <legend class="col-form-label col-sm-3 float-sm-left pt-0">性别</legend>
+                        <div class="col-sm-5">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sex" id="m" value="1" checked="">
+                                <label class="form-check-label" for="m">
+                                    男
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sex" id="w" value="0">
+                                <label class="form-check-label" for="w">
+                                    女
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <label for="content" class="col-sm-2 col-form-label">主述</label>
+                <div class="col-sm-10">
+                    <input type="text" name="content" class="form-control" id="content">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="remake" class="col-sm-2 col-form-label">既往史</label>
+                <div class="col-sm-10">
+                    <input type="text" name="remake" class="form-control" id="remake">
+                </div>
+            </div>
+            <div class="form-group row" style="margin:20px;">
+                <div class="">
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </form>
+        {#        </div>#}
+        {#        <small#}
+        {#                class="text-black-50"#}
+        {#                style="display: flex; justify-content: center; margin-bottom: 16px"#}
+        {#        >扫码加入微信云托管用户群</small#}
+        {#        >#}
+        {#        <img#}
+        {#                class="qrcode middle"#}
+        {#                src="https://qcloudimg.tencent-cloud.cn/raw/89b46988d3cd73d8a56e76a1b82bb377.png"#}
+        {#        />#}
+    </div>
+</div>
+</body>
+<script src="https://mat1.gtimg.com/www/asset/lib/jquery/jquery/jquery-1.11.1.min.js"></script>
+<script src="/static/jquery.form.js"></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"
+></script>
+<script>
+    init();
+
+    function init() {
+        $.ajax("/api/count", {
+            method: "get",
+        }).done(function (res) {
+            if (res && res.data !== undefined) {
+                $(".count-number").html(res.data);
+            }
+        });
+    }
+
+    $("form").submit(function () {
+        var data = {};
+        $("form").serializeArray().map(function (x) {
+            if (data[x.name] !== undefined) {
+                if (!data[x.name].push) {
+                    data[x.name] = [data[x.name]];
+                }
+                data[x.name].push(x.value || '');
+            } else {
+                data[x.name] = x.value || '';
+            }
+        });
+        {#data = $("form").serializeArray()#}
+        console.log(data)
+        $.ajax("/api/info", {
+            method: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data:JSON.stringify(data),
+        }).done(function (res) {
+            console.log(res)
+            if (res && res.data !== undefined) {
+                $(".count-number").html(res.data);
+            }
+        });
+        console.log("请求了")
+
+        return false;
+    })
+    var options = {
+        {#target : '#output',    // 把服务器返回的内容放入id为output的元素中#}
+        {#beforeSubmit : showRequest,    // 提交前的回调函数#}
+        success: showResponse,    // 提交后的回调函数
+        // url : url,    //默认是form的action，如果申明，则会覆盖
+        // type : type,    // 默认值是form的method("GET" or "POST")，如果声明，则会覆盖
+        // dataType : null,    // html（默认）、xml、script、json接受服务器端返回的类型
+        // clearForm : true,    // 成功提交后，清除所有表单元素的值
+        // resetForm : true,    // 成功提交后，重置所有表单元素的值
+        timeout: 5000    // 限制请求的时间，当请求大于3秒后，跳出请求
+    }
+
+    function showResponse() {
+
+    }
+
+    function set(action) {
+        $.ajax("/api/count", {
+            method: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                action: action,
+            }),
+        }).done(function (res) {
+            if (res && res.data !== undefined) {
+                $(".count-number").html(res.data);
+            }
+        });
+    }
+</script>
+</html>
